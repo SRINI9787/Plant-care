@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — Leafwise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header"><nav class="nav container" aria-label="Main navigation"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">✳</span> leafwise<span class="brand-period">.</span></a><div class="nav-links"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('index') }}#dashboard">Care dashboard</a><a class="active" href="{{ url_for('about') }}">About</a></div><a class="nav-cta" href="{{ url_for('index') }}#analyzer">Check a leaf <span aria-hidden="true">↗</span></a></nav></header>
+  <main class="about-main container">
+    <div class="about-hero"><span class="eyebrow">A LITTLE ABOUT LEAFWISE</span><h1>More confidence.<br><span>More care.</span></h1><p>A beginner-friendly plant health assistant that pairs an image classifier with practical, careful next steps.</p></div>
+    <section class="about-grid">
+      <article class="about-card"><span class="care-icon light-icon">✳</span><h2>How the model works</h2><p>The training script fine-tunes a MobileNetV2 image classifier on labeled PlantVillage-style leaf images. It separates data into training, validation, and held-out test sets and saves measured evaluation results locally.</p></article>
+      <article class="about-card"><span class="care-icon water-icon">♡</span><h2>What a result means</h2><p>A result is the model's closest supported image category, not a confirmed diagnosis. The confidence score can be misleading on unfamiliar plants, backgrounds, or real-world conditions; lower scores are shown as uncertain.</p></article>
+      <article class="about-card"><span class="care-icon soil-icon">⌂</span><h2>Your photo stays local</h2><p>This starter app processes an uploaded image in the running Flask server and doesn't save the original image. It doesn't send plant photos to an external prediction service.</p></article>
+      <article class="about-card"><span class="care-icon feed-icon">🌱</span><h2>A useful next step</h2><p>Care suggestions are general starting points, not prescriptions. We avoid pesticide dosages; for a worsening plant, confirm the issue with a local agricultural extension service or plant-health professional.</p></article>
+    </section>
+    <div class="about-cta"><div><span class="eyebrow">READY WHEN YOU ARE</span><h2>Every plant has a story.</h2></div><a class="button button-primary" href="{{ url_for('index') }}#analyzer">Start a plant check <span aria-hidden="true">→</span></a></div>
+  </main>
+  <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">✳</span> leafwise<span class="brand-period">.</span></a><span>Made for curious plant people. A little more green, every day.</span><a href="{{ url_for('index') }}">Home</a></div></footer>
+</body>
+</html>

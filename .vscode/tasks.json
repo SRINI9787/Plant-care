@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run AI Plant Doctor Flask app",
+			"type": "shell",
+			"command": "C:\\Users\\srini\\OneDrive\\Documents\\Plant care\\.venv\\Scripts\\python.exe",
+			"args": [
+				"app.py"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

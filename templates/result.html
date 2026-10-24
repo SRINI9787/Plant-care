@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plant check — Leafwise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header"><nav class="nav container" aria-label="Main navigation"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">✳</span> leafwise<span class="brand-period">.</span></a><div class="nav-links"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('index') }}#dashboard">Care dashboard</a><a href="{{ url_for('about') }}">About</a></div><a class="nav-cta" href="{{ url_for('index') }}#analyzer">Check another leaf <span aria-hidden="true">↗</span></a></nav></header>
+  <main class="result-main container">
+    <a class="back-link" href="{{ url_for('index') }}#analyzer">← Back to plant check</a>
+    {% if unavailable %}
+      <section class="message-panel"><span class="message-icon">🌱</span><span class="eyebrow">{% if tensorflow_unavailable %}TENSORFLOW SETUP NEEDED{% else %}ONE SETUP STEP LEFT{% endif %}</span><h1>{% if tensorflow_unavailable %}TensorFlow isn't installed yet.{% else %}The plant model isn't trained yet.{% endif %}</h1><p>No prediction was made. {% if tensorflow_unavailable %}Install the project dependencies with <code>python -m pip install -r requirements.txt</code>, then prepare the dataset and train the classifier using the Windows setup steps in <code>README.md</code>.{% else %}Follow the Windows setup steps in <code>README.md</code> to prepare the dataset and train the classifier, then try your photo again.{% endif %}</p><a class="button button-primary" href="{{ url_for('index') }}#dashboard">Explore plant care tips</a></section>
+    {% elif model_error %}
+      <section class="message-panel"><span class="message-icon">⚠</span><span class="eyebrow">MODEL FILES NEED ATTENTION</span><h1>We couldn't load the classifier.</h1><p>Check that <code>model\plant_disease.keras</code> and <code>model\class_names.json</code> were created together by <code>train_model.py</code>. See the Flask terminal for the detailed error.</p><a class="button button-primary" href="{{ url_for('index') }}#analyzer">Try again</a></section>
+    {% elif analysis_error %}
+      <section class="message-panel"><span class="message-icon">⚠</span><span class="eyebrow">ANALYSIS DIDN'T FINISH</span><h1>We couldn't complete this check.</h1><p>No diagnosis was produced. Check the Flask terminal for details, then try a clear JPG or PNG image again.</p><a class="button button-primary" href="{{ url_for('index') }}#analyzer">Try another photo</a></section>
+    {% elif uncertain %}
+      <section class="message-panel uncertainty-panel"><span class="message-icon">🍃</span><span class="eyebrow">A LOW-CONFIDENCE MATCH</span><h1>We aren't sure what we're seeing.</h1><p>The closest model category had a confidence score of <strong>{{ "%.1f"|format(confidence * 100) }}%</strong>, below the app's {{ "%.0f"|format(threshold * 100) }}% review threshold. No disease prediction is shown.</p><p>Try a well-lit close-up of a single leaf. If the plant looks unwell, check for pests and changing conditions or ask a local plant-care expert.</p><a class="button button-primary" href="{{ url_for('index') }}#analyzer">Try a clearer photo</a></section>
+    {% else %}
+      <div class="result-heading"><div><span class="eyebrow">YOUR PLANT CHECK</span><h1>Here's what the model noticed.</h1><p>A possible match from the photo you shared. Treat it as a helpful clue, not a diagnosis.</p></div><span class="result-badge {% if healthy %}healthy-badge{% endif %}">{% if healthy %}✿ Healthy match{% else %}✳ Possible issue{% endif %}</span></div>
+      <section class="prediction-card">
+        <div class="prediction-main"><span class="eyebrow">POSSIBLE MATCH</span><h2>{{ condition }}</h2><p>Plant group: <strong>{{ plant }}</strong></p></div>
+        <div class="confidence-box"><span class="eyebrow">MODEL CONFIDENCE</span><strong>{{ "%.1f"|format(confidence * 100) }}%</strong><div class="confidence-track" role="img" aria-label="Model confidence {{ "%.1f"|format(confidence * 100) }} percent"><span style="width: {{ (confidence * 100)|round(1) }}%"></span></div><small>A model score, not a probability that this is a confirmed diagnosis.</small></div>
+      </section>
+      <div class="disclaimer"><span aria-hidden="true">ⓘ</span><p>This image-based suggestion is not guaranteed and may be wrong. Check your plant and its growing conditions; contact a local extension service or plant-health professional if it is worsening.</p></div>
+      <div class="report-grid">
+        <article class="report-card"><span class="report-icon">◌</span><span class="eyebrow">WHAT TO LOOK FOR</span><h3>Possible symptoms</h3><p>{{ guidance.symptoms }}</p></article>
+        <article class="report-card"><span class="report-icon">⌁</span><span class="eyebrow">WHAT MAY BE GOING ON</span><h3>Possible causes</h3><p>{{ guidance.causes }}</p></article>
+        <article class="report-card"><span class="report-icon">✿</span><span class="eyebrow">GENTLE NEXT STEPS</span><h3>Care &amp; treatment</h3><p>{{ guidance.care }}</p></article>
+        <article class="report-card"><span class="report-icon">◉</span><span class="eyebrow">WATERING</span><h3>Keep moisture balanced</h3><p>{{ guidance.watering }}</p></article>
+        <article class="report-card"><span class="report-icon">☼</span><span class="eyebrow">LIGHT &amp; SOIL</span><h3>Support healthy growth</h3><p>{{ guidance.sunlight_soil }}</p></article>
+        <article class="report-card"><span class="report-icon">✳</span><span class="eyebrow">FERTILIZER</span><h3>Feed thoughtfully</h3><p>{{ guidance.fertilizer }}</p></article>
+      </div>
+      <div class="result-actions"><a class="button button-primary" href="{{ url_for('index') }}#analyzer">Check another leaf <span aria-hidden="true">→</span></a><a class="text-link" href="{{ url_for('about') }}">How this works</a></div>
+    {% endif %}
+  </main>
+  <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">✳</span> leafwise<span class="brand-period">.</span></a><span>Helpful hints, with honest limits.</span><a href="{{ url_for('about') }}">About the project</a></div></footer>
+</body>
+</html>

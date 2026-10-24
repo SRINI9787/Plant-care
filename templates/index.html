@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f8f2">
+  <meta name="description" content="Upload a leaf photo for a transparent, AI-assisted plant health check and practical care guidance.">
+  <title>Leafwise — AI Plant Doctor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">✳</span> leafwise<span class="brand-period">.</span></a>
+      <div class="nav-links"><a class="active" href="{{ url_for('index') }}">Home</a><a href="#dashboard">Care dashboard</a><a href="{{ url_for('about') }}">About</a></div>
+      <a class="nav-cta" href="#analyzer">Check a leaf <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span> YOUR FRIENDLY PLANT HEALTH CHECK</div>
+        <h1>A little help for<br>your <span>leafy friends.</span></h1>
+        <p class="hero-text">Upload a clear leaf photo for an AI-assisted health check, plus thoughtful next steps to help your plant thrive.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#analyzer">Start a plant check <span aria-hidden="true">→</span></a><a class="text-link" href="#how-it-works">How it works <span aria-hidden="true">↓</span></a></div>
+        <div class="trust-note"><span class="avatar-stack" aria-hidden="true"><i>🌱</i><i>🍃</i><i>🌿</i></span><span>Curious care, not guesswork.<br><strong>Always a starting point.</strong></span></div>
+      </div>
+      <div class="hero-art">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="plant-illustration"><img src="{{ url_for('static', filename='images/leaf.svg') }}" alt="Illustration of healthy green leaves"></div>
+        <div class="floating-card card-sun"><span class="sun-icon">☼</span><span><strong>Grow with confidence</strong><small>One leaf at a time</small></span></div>
+        <div class="floating-card card-leaf"><span class="leaf-icon">✿</span><span><strong>A gentler kind of diagnosis</strong><small>Practical, plant-first advice</small></span></div>
+        <span class="decor-dot dot-one"></span><span class="decor-dot dot-two"></span><span class="decor-dot dot-three"></span>
+      </div>
+    </section>
+
+    <section class="analyzer-section" id="analyzer">
+      <div class="container">
+        <div class="section-heading"><div><span class="eyebrow">THE PLANT CHECK</span><h2>Let's take a closer look.</h2></div><p>A clear photo helps us spot the details.<br>It takes less than a minute.</p></div>
+        {% if not model_ready %}
+        <div class="model-notice" role="status"><span aria-hidden="true">ⓘ</span><div><strong>Image analysis needs a trained model.</strong><br>This project does not include a pre-trained disease model. Follow <code>README.md</code> to prepare PlantVillage and train it; care guidance is available below in the meantime.</div></div>
+        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}<div class="flash-list">{% for category, message in messages %}<div class="flash flash-{{ category }}" role="alert">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% endwith %}
+        <div class="analyzer-grid">
+          <form class="upload-card" id="upload-form" action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data">
+            <label class="upload-zone" for="image-input" id="upload-zone">
+              <input id="image-input" name="image" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+              <span class="upload-icon" aria-hidden="true">↑</span>
+              <strong id="upload-title">Drop a leaf photo here</strong>
+              <span class="upload-subtitle" id="upload-subtitle">or <span class="browse-link">browse files</span> on your device</span>
+              <span class="file-types">JPG or PNG · up to 8 MB</span>
+              <img class="preview-image" id="image-preview" alt="Selected plant leaf preview" hidden>
+            </label>
+            <p class="upload-error" id="upload-error" role="alert" hidden></p>
+            <div class="upload-tips"><span aria-hidden="true">✦</span><span><strong>For the clearest check</strong><br>Use one leaf, good natural light, and a simple background.</span></div>
+            <button class="button button-primary analyze-button" type="submit" id="analyze-button">Check my plant <span aria-hidden="true">→</span></button>
+            <p class="privacy-note">Your photo is analyzed for this request and isn't saved by this app.</p>
+          </form>
+          <aside class="steps-card">
+            <div class="steps-top"><span class="eyebrow">SIMPLE AS 1–2–3</span><span class="steps-spark" aria-hidden="true">✳</span></div>
+            <h3>A plant check,<br>made simple.</h3>
+            <ol class="steps-list">
+              <li><span class="step-number">01</span><span><strong>Share a leaf photo</strong><small>Choose a clear JPG or PNG image.</small></span></li>
+              <li><span class="step-number">02</span><span><strong>See what the model spots</strong><small>Get a possible match and confidence—or an honest uncertainty message.</small></span></li>
+              <li><span class="step-number">03</span><span><strong>Find your next step</strong><small>Explore practical care ideas for your plant.</small></span></li>
+            </ol>
+            <div class="gentle-reminder"><span aria-hidden="true">♡</span> A photo is a starting point—not a guaranteed diagnosis.</div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section container" id="dashboard">
+      <div class="section-heading"><div><span class="eyebrow">YOUR EVERYDAY PLANT CARE</span><h2>Good care starts with the basics.</h2></div><p>Small, steady habits can make a<br>big difference for your plants.</p></div>
+      <div class="care-grid">
+        <article class="care-card"><span class="care-icon water-icon" aria-hidden="true">◉</span><h3>Water thoughtfully</h3><p>Check the soil before watering. Water at the base and let excess drain away—most plants dislike soggy roots.</p><span class="care-tag">LESS GUESSING, MORE CHECKING</span></article>
+        <article class="care-card"><span class="care-icon light-icon" aria-hidden="true">☼</span><h3>Find their light</h3><p>Learn your plant's light needs and watch how sunlight moves through your space throughout the day.</p><span class="care-tag">LET THE LEAVES GUIDE YOU</span></article>
+        <article class="care-card"><span class="care-icon soil-icon" aria-hidden="true">✿</span><h3>Keep roots happy</h3><p>Use a clean pot with drainage and a growing mix suited to your plant. Healthy roots need air, too.</p><span class="care-tag">A LITTLE ROOM TO BREATHE</span></article>
+        <article class="care-card"><span class="care-icon feed-icon" aria-hidden="true">✳</span><h3>Feed with care</h3><p>Fertilizer supports growth; it doesn't cure disease. Follow the product label and your plant's seasonal needs.</p><span class="care-tag">FOLLOW THE LABEL</span></article>
+      </div>
+    </section>
+
+    <section class="how-section" id="how-it-works"><div class="container how-inner"><div><span class="eyebrow">A NOTE ON AI</span><h2>Helpful hints.<br>Honest limits.</h2></div><p>Once trained, the classifier compares leaf photos with its labeled training categories. Lighting, camera quality, and look-alike symptoms can affect its suggestions. A high confidence score isn't proof of a diagnosis. If your plant is worsening, ask a local gardening or agricultural expert to take a look.</p><a href="{{ url_for('about') }}" class="text-link">Learn about this project <span aria-hidden="true">→</span></a></div></section>
+  </main>
+  <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">✳</span> leafwise<span class="brand-period">.</span></a><span>Made for curious plant people. A little more green, every day.</span><a href="{{ url_for('about') }}">About the project</a></div></footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>
